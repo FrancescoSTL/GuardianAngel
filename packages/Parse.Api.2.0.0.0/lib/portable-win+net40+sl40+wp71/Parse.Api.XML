@@ -1,0 +1,405 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Parse.Api</name>
+    </assembly>
+    <members>
+        <member name="T:Parse.Api.Attributes.JsonIgnoreForSerializationAttribute">
+            <summary>
+            Marks a property that should be ignored when JSON serializing.
+            JSON.NET's JsonIgnoreAttribute ignores properties for both serialization and deserialization.
+            </summary>
+        </member>
+        <member name="T:Parse.Api.Converters.ParseBytesConverter">
+            <summary>
+            Handles deserialization of ParseBytes into byte[].
+            </summary>
+        </member>
+        <member name="T:Parse.Api.Converters.ParseJsonConverter`1">
+            <summary>
+            Base class for handling deserialization of Parse data types.
+            </summary>
+        </member>
+        <member name="T:Parse.Api.Converters.ParseDateConverter">
+            <summary>
+            Handles deserialization of ParseDate into DateTime or DateTimeOffset.
+            </summary>
+        </member>
+        <member name="T:Parse.Api.IParseRestClient">
+            <summary>
+            Wrapper for the Parse REST API.
+            </summary>
+            <seealso cref="!:http://parse.com/docs/rest"/>
+        </member>
+        <member name="M:Parse.Api.IParseRestClient.CreateObject``1(``0)">
+            <summary>
+            Creates a new ParseObject
+            </summary>
+            <param name="obj">The object to be created on the server</param>
+            <returns>A fully populated ParseObject, including ObjectId</returns>
+        </member>
+        <member name="M:Parse.Api.IParseRestClient.Update``1(``0)">
+            <summary>
+            Updates a pre-existing ParseObject
+            </summary>
+            <param name="obj">The object being updated</param>
+        </member>
+        <member name="M:Parse.Api.IParseRestClient.GetObject``1(System.String,System.Boolean)">
+            <summary>
+            Get one object identified by its ID from Parse
+            </summary>
+            <param name="objectId">The ObjectId of the object</param>
+            <param name="includeReferences">Whether or not to fetch objects pointed to</param>
+            <returns>A dictionary with the object's attributes</returns>
+        </member>
+        <member name="M:Parse.Api.IParseRestClient.GetObjects``1(System.Object,System.String,System.Int32,System.Int32)">
+            <summary>
+            Search for objects on Parse based on attributes
+            </summary>
+            <param name="where">See https://www.parse.com/docs/rest#data-querying for more details</param>
+            <param name="order">The name of the attribute used to order results. Prefacing with '-' will reverse results. Comma separate for multiple orderings.</param>
+            <param name="limit">The maximum number of results to be returned</param>
+            <param name="skip">The number of results to skip at the start</param>
+            <returns>A list of result object, and the total count of results in case the results were limited</returns>
+        </member>
+        <member name="M:Parse.Api.IParseRestClient.DeleteObject``1(``0)">
+            <summary>
+            Deletes an object from Parse
+            </summary>
+            <param name="obj">The object to be deleted</param>
+        </member>
+        <member name="M:Parse.Api.IParseRestClient.AddToRelation``1(``0,System.String,System.Collections.Generic.IEnumerable{Parse.Api.Models.ParseObject})">
+            <summary>
+            Adds to an existing relation, or creates one if it doesn't exist
+            </summary>
+            <param name="fromObj">The object with the relation</param>
+            <param name="relationName">The name of the relation</param>
+            <param name="toObjs">The ParseObjects to add to the relation</param>
+        </member>
+        <member name="M:Parse.Api.IParseRestClient.RemoveFromRelation``1(``0,System.String,System.Collections.Generic.IEnumerable{Parse.Api.Models.ParseObject})">
+            <summary>
+            Removes from an existing relation
+            </summary>
+            <param name="fromObj">The object with the relation</param>
+            <param name="relationName">The name of the relation</param>
+            <param name="toObjs">The ParseObjects to remove from the relation</param>
+        </member>
+        <member name="M:Parse.Api.IParseRestClient.SignUp``1(``0)">
+            <summary>
+            Creates a new ParseUser and session
+            </summary>
+            <param name="user">The user to create, requires username and password</param>
+            <returns>Fully populated created user and a session token</returns>
+        </member>
+        <member name="M:Parse.Api.IParseRestClient.LogIn``1(``0)">
+            <summary>
+            Log in as a ParseUser to get a session
+            </summary>
+            <param name="user">The user to log in, requires username and password</param>
+            <returns>Fully populated logged in user and a session token</returns>
+        </member>
+        <member name="M:Parse.Api.IParseRestClient.GetUser``1(System.String,System.String,System.Boolean)">
+            <summary>
+            Get one user identified by it's Parse ID
+            </summary>
+            <param name="objectId">The ObjectId of the user</param>
+            <param name="includeReferences">Whether or not to fetch objects pointed to</param>
+            <param name="sessionToken">more data comes back if the user is authenticated</param>
+            <returns></returns>
+        </member>
+        <member name="M:Parse.Api.IParseRestClient.GetUsers``1(System.Object,System.String,System.Int32,System.Int32)">
+            <summary>
+            Search for users on Parse based on attributes
+            </summary>
+            <param name="where">See https://www.parse.com/docs/rest#data-querying for more details</param>
+            <param name="order">The name of the attribute used to order results. Prefacing with '-' will reverse results. Comma separate for multiple orderings.</param>
+            <param name="limit">The maximum number of results to be returned</param>
+            <param name="skip">The number of results to skip at the start</param>
+            <returns>A list of result users, and the total count of results in case the results were limited</returns>
+        </member>
+        <member name="M:Parse.Api.IParseRestClient.UpdateUser``1(``0,System.String)">
+            <summary>
+            Updates a pre-existing ParseUser
+            </summary>
+            <param name="user">The user to update</param>
+            <param name="sessionToken">Session token given by SignUp or LogIn</param>
+        </member>
+        <member name="M:Parse.Api.IParseRestClient.DeleteUser``1(``0,System.String)">
+            <summary>
+            Updates a pre-existing ParseUser
+            </summary>
+            <param name="user">The user to delete</param>
+            <param name="sessionToken">Session token given by SignUp or LogIn</param>
+        </member>
+        <member name="M:Parse.Api.IParseRestClient.CloudFunction(System.String,System.Object)">
+            <summary>
+            Executes a pre-existing cloud function, see here for details: https://www.parse.com/docs/cloud_code_guide
+            </summary>
+            <param name="name">The name of the cloud code function</param>
+            <param name="data">Data to pass to the cloud code function</param>
+            <returns>The result of the cloud code function</returns>
+        </member>
+        <member name="M:Parse.Api.IParseRestClient.MarkAppOpened(System.Nullable{System.DateTime})">
+            <summary>
+            Records an AppOpened event for Parse analytics
+            </summary>
+            <param name="dateUtc">The date the app was opened, or now if not specified</param>
+        </member>
+        <member name="T:Parse.Api.Models.Constraint">
+            <summary>
+            Constraints are used for constructing precise queries. For usage, see the README.
+            </summary>
+            <seealso cref="!:http://parse.com/docs/rest#queries-constraints"/>
+        </member>
+        <member name="P:Parse.Api.Models.Constraint.LessThan">
+            <summary>
+            Used to find Parse objects that are less than the provided argument.
+            </summary>
+        </member>
+        <member name="P:Parse.Api.Models.Constraint.LessThanOrEqualTo">
+            <summary>
+            Used to find Parse objects that are less than or equal to the provided argument.
+            </summary>
+        </member>
+        <member name="P:Parse.Api.Models.Constraint.GreaterThan">
+            <summary>
+            Used to find Parse objects that are greater than the provided argument.
+            </summary>
+        </member>
+        <member name="P:Parse.Api.Models.Constraint.GreaterThanOrEqualTo">
+            <summary>
+            Used to find Parse objects that are greater than or equal to the provided argument.
+            </summary>
+        </member>
+        <member name="P:Parse.Api.Models.Constraint.NotEqualTo">
+            <summary>
+            Used to find Parse objects that are not equal to the provided argument.
+            </summary>
+        </member>
+        <member name="P:Parse.Api.Models.Constraint.In">
+            <summary>
+            Used to find Parse objects that contain a value in the provided list of arguments.
+            </summary>
+        </member>
+        <member name="P:Parse.Api.Models.Constraint.NotIn">
+            <summary>
+            Used to find Parse objects that do not contains values in the provided list of arguments.
+            </summary>
+        </member>
+        <member name="P:Parse.Api.Models.Constraint.All">
+            <summary>
+            Used to find Parse objects with an array field containing each of the values in the provided list of arguments.
+            </summary>
+        </member>
+        <member name="P:Parse.Api.Models.Constraint.Exists">
+            <summary>
+            Used to find Parse objects that have or do not have values for the specified property.
+            </summary>
+        </member>
+        <member name="P:Parse.Api.Models.Constraint.Select">
+            <summary>
+            Used to find Parse objects that are related to other objects.
+            </summary>
+        </member>
+        <member name="P:Parse.Api.Models.Constraint.DontSelect">
+            <summary>
+            Used to find Parse objects that are related to other objects.
+            </summary>
+        </member>
+        <member name="P:Parse.Api.Models.Constraint.Regex">
+            <summary>
+            Used to find Parse objects whose string value matches the provided Perl-based regex string.
+            </summary>
+        </member>
+        <member name="P:Parse.Api.Models.Constraint.RegexOptions">
+            <summary>
+            Options used to control how the regex property matches values. 
+            Possible values for this include 'i' for a case-insensitive 
+            search and 'm' to search through multiple lines of text. To 
+            use both options, simply concatenate them as 'im'.
+            </summary>
+        </member>
+        <member name="T:Parse.Api.Models.Internal.ParseBytes">
+            <summary>
+            Parse data type for byte[]
+            </summary>
+        </member>
+        <member name="T:Parse.Api.Models.Internal.ParseDate">
+            <summary>
+            Parse data type for DateTime and DateTimeOffset
+            </summary>
+        </member>
+        <member name="T:Parse.Api.Models.ParseException">
+            <summary>
+            An exception from the Parse API.
+            </summary>
+            <seealso cref="!:http://www.parse.com/docs/dotnet/api/html/T_Parse_ParseException_ErrorCode.htm"/>
+        </member>
+        <member name="T:Parse.Api.Models.ParseGeoPoint">
+            <summary>
+            Parse data type for a geographic point (lat + lon)
+            </summary>
+        </member>
+        <member name="T:Parse.Api.Models.ParseObject">
+            <summary>
+            Base class for all objects in Parse
+            </summary>
+        </member>
+        <member name="T:Parse.Api.Models.Internal.ParsePointer">
+            <summary>
+            Parse data type for an object reference to a ParseObject
+            </summary>
+        </member>
+        <member name="T:Parse.Api.Models.Internal.ParseRelation">
+            <summary>
+            Parse data type for a one-to-many or many-to-many relationship bewtween ParseObjects
+            </summary>
+        </member>
+        <member name="T:Parse.Api.Models.ParseResult">
+            <summary>
+            Base class for result from Parse API request.
+            </summary>
+        </member>
+        <member name="T:Parse.Api.Models.ParseResult`1">
+            <summary>
+            Base class for result from Parse API request.
+            </summary>
+        </member>
+        <member name="T:Parse.Api.Models.QueryResult`1">
+            <summary>
+            The results of a query, including the total count, which is useful if the results were limited.
+            </summary>
+        </member>
+        <member name="T:Parse.Api.Models.UserResult`1">
+            <summary>
+            Users receive a session token after signing up or logging in.
+            The session token is required to update user information.
+            </summary>
+        </member>
+        <member name="T:Parse.Api.Models.ParseUser">
+            <summary>
+            Default Parse User, should be inherited for custom User classes (i.e. if "phoneNumber" is added)
+            </summary>
+        </member>
+        <member name="T:Parse.Api.ParseRestClient">
+            <summary>
+            Wrapper for the Parse REST API.
+            </summary>
+            <seealso cref="!:http://parse.com/docs/rest"/>
+        </member>
+        <member name="M:Parse.Api.ParseRestClient.CreateObject``1(``0)">
+            <summary>
+            Creates a new ParseObject
+            </summary>
+            <param name="obj">The object to be created on the server</param>
+            <returns>A fully populated ParseObject, including ObjectId</returns>
+        </member>
+        <member name="M:Parse.Api.ParseRestClient.Update``1(``0)">
+            <summary>
+            Updates a pre-existing ParseObject
+            </summary>
+            <param name="obj">The object being updated</param>
+        </member>
+        <member name="M:Parse.Api.ParseRestClient.GetObject``1(System.String,System.Boolean)">
+            <summary>
+            Get one object identified by its ID from Parse
+            </summary>
+            <param name="objectId">The ObjectId of the object</param>
+            <param name="includeReferences">Whether or not to fetch objects pointed to</param>
+            <returns>A dictionary with the object's attributes</returns>
+        </member>
+        <member name="M:Parse.Api.ParseRestClient.GetObjects``1(System.Object,System.String,System.Int32,System.Int32)">
+            <summary>
+            Search for objects on Parse based on attributes
+            </summary>
+            <param name="where">See https://www.parse.com/docs/rest#data-querying for more details</param>
+            <param name="order">The name of the attribute used to order results. Prefacing with '-' will reverse results. Comma separate for multiple orderings.</param>
+            <param name="limit">The maximum number of results to be returned</param>
+            <param name="skip">The number of results to skip at the start</param>
+            <returns>A list of result object, and the total count of results in case the results were limited</returns>
+        </member>
+        <member name="M:Parse.Api.ParseRestClient.DeleteObject``1(``0)">
+            <summary>
+            Deletes an object from Parse
+            </summary>
+            <param name="obj">The object to be deleted</param>
+        </member>
+        <member name="M:Parse.Api.ParseRestClient.AddToRelation``1(``0,System.String,System.Collections.Generic.IEnumerable{Parse.Api.Models.ParseObject})">
+            <summary>
+            Adds to an existing relation, or creates one if it doesn't exist
+            </summary>
+            <param name="fromObj">The object with the relation</param>
+            <param name="relationName">The name of the relation</param>
+            <param name="toObjs">The ParseObjects to add to the relation</param>
+        </member>
+        <member name="M:Parse.Api.ParseRestClient.RemoveFromRelation``1(``0,System.String,System.Collections.Generic.IEnumerable{Parse.Api.Models.ParseObject})">
+            <summary>
+            Removes from an existing relation
+            </summary>
+            <param name="fromObj">The object with the relation</param>
+            <param name="relationName">The name of the relation</param>
+            <param name="toObjs">The ParseObjects to remove from the relation</param>
+        </member>
+        <member name="M:Parse.Api.ParseRestClient.SignUp``1(``0)">
+            <summary>
+            Creates a new ParseUser and session
+            </summary>
+            <param name="user">The user to create, requires username and password</param>
+            <returns>Fully populated created user and a session token</returns>
+        </member>
+        <member name="M:Parse.Api.ParseRestClient.LogIn``1(``0)">
+            <summary>
+            Log in as a ParseUser to get a session
+            </summary>
+            <param name="user">The user to log in, requires username and password</param>
+            <returns>Fully populated logged in user and a session token</returns>
+        </member>
+        <member name="M:Parse.Api.ParseRestClient.GetUser``1(System.String,System.String,System.Boolean)">
+            <summary>
+            Get one user identified by it's Parse ID
+            </summary>
+            <param name="objectId">The ObjectId of the user</param>
+            <param name="includeReferences">Whether or not to fetch objects pointed to</param>
+            <param name="sessionToken">more data comes back if the user is authenticated</param>
+            <returns></returns>
+        </member>
+        <member name="M:Parse.Api.ParseRestClient.GetUsers``1(System.Object,System.String,System.Int32,System.Int32)">
+            <summary>
+            Search for users on Parse based on attributes
+            </summary>
+            <param name="where">See https://www.parse.com/docs/rest#data-querying for more details</param>
+            <param name="order">The name of the attribute used to order results. Prefacing with '-' will reverse results. Comma separate for multiple orderings.</param>
+            <param name="limit">The maximum number of results to be returned</param>
+            <param name="skip">The number of results to skip at the start</param>
+            <returns>A list of result users, and the total count of results in case the results were limited</returns>
+        </member>
+        <member name="M:Parse.Api.ParseRestClient.UpdateUser``1(``0,System.String)">
+            <summary>
+            Updates a pre-existing ParseUser
+            </summary>
+            <param name="user">The user to update</param>
+            <param name="sessionToken">Session token given by SignUp or LogIn</param>
+        </member>
+        <member name="M:Parse.Api.ParseRestClient.DeleteUser``1(``0,System.String)">
+            <summary>
+            Updates a pre-existing ParseUser
+            </summary>
+            <param name="user">The user to delete</param>
+            <param name="sessionToken">Session token given by SignUp or LogIn</param>
+        </member>
+        <member name="M:Parse.Api.ParseRestClient.CloudFunction(System.String,System.Object)">
+            <summary>
+            Executes a pre-existing cloud function, see here for details: https://www.parse.com/docs/cloud_code_guide
+            </summary>
+            <param name="name">The name of the cloud code function</param>
+            <param name="data">Data to pass to the cloud code function</param>
+            <returns>The result of the cloud code function</returns>
+        </member>
+        <member name="M:Parse.Api.ParseRestClient.MarkAppOpened(System.Nullable{System.DateTime})">
+            <summary>
+            Records an AppOpened event for Parse analytics
+            </summary>
+            <param name="dateUtc">The date the app was opened, or now if not specified</param>
+        </member>
+    </members>
+</doc>
